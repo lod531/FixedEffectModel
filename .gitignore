@@ -1,4 +1,6 @@
+dist/
 env*
 *.swp
 *__pycache__
 dev.txt
+FixedEffectModelPyHDFE.egg-info*
