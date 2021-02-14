@@ -17,7 +17,7 @@ import pandas as pd
 
 
 def ols_high_d_category(data_df, consist_input=None, out_input=None, category_input=None, cluster_input=[],
-                        formula=None, robust=False, c_method='cgm', psdef=True, epsilon=1e-8, max_iter=1e6, process=5):
+                        formula=None, robust=False, c_method=None, psdef=True, epsilon=1e-8, max_iter=1e6, process=5):
     """
 
     :param data_df: Dataframe of relevant data
@@ -37,6 +37,12 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
     :return:params,df,bse,tvalues,pvalues,rsquared,rsquared_adj,fvalue,f_pvalue,variance_matrix,fittedvalues,resid,summary
     """
 
+    # in case of multiple clusters cgm2 is preferred. Can be manually
+    # overrriden by supplying the c_method parameter.
+    if len(cluster_input) > 1 and c_method is None:
+        c_method='cgm2'
+    else:
+        c_method='cgm'
     if (consist_input is None) & (formula is None):
         raise NameError('You have to input list of variables name or formula')
     elif consist_input is None:

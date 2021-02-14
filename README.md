@@ -1,12 +1,13 @@
-FixedEffectModel: A Python Package for Linear Model with High Dimensional Fixed Effects.
+FixedEffectModelPyHDFE: A Python Package for Linear Model with High Dimensional Fixed Effects.
 =======================
 **FixedEffectModel** is a Python Package designed and built by **Kuaishou DA ecology group**. It provides solutions for linear model with high dimensional fixed effects,including support for calculation in variance (robust variance and multi-way cluster variance), fixed effects, and standard error of fixed effects. It also supports model with instrument variables (will upgrade in late Nov.2020).
 
+As You may have noticed, this is not **FixedEffectModel**, but rather FixedEffectModel**PyHDFE**. In this version, the fixed effects backend was switched to use the PyHDFE library, offering significant speed increases with no downsides.
 # Installation
 
 Install this package directly from PyPI
 ```bash
-$ pip install FixedEffectModel
+$ pip install FixedEffectModelPyHDFE
 ```
 
 # Main Functions
@@ -22,10 +23,10 @@ $ pip install FixedEffectModel
 # Example
 
 ```python
-import FixedEffectModel.api as FEM
+import FixedEffectModelPyHDFE.api as FEM
 import pandas as pd
 
-df = pd.read_csv('yourdata.csv')
+df = pd.read_csv('path/to/yourdata.csv')
 
 #define model
 #you can define the model through defining formula like 'dependent variable ~ continuous variable|fixed_effect|clusters|(endogenous variables ~ instrument variables)'
