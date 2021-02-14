@@ -5,7 +5,7 @@ from FixedEffectModel.ClusterErr import clustered_error
 from FixedEffectModel.RobustErr import robust_err
 from FixedEffectModel.CalDf import cal_df
 from FixedEffectModel.FormTransfer import form_transfer
-from FixedEffectModel.util.to_latex import to_latex
+#from FixedEffectModel.util.to_latex import to_latex
 from FixedEffectModel.GetFixedEffect import getfe
 from FixedEffectModel.AlphaStdErr import alpha_std
 

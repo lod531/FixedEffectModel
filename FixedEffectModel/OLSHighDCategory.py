@@ -1,6 +1,6 @@
 from statsmodels.compat import lrange
 from statsmodels.iolib import SimpleTable
-from FixedEffectModel.DemeanDataframe import demean_dataframe
+from FixedEffectModel.DemeanDataframe import demean_dataframe, demean_dataframe_pyhdfe
 from FixedEffectModel.FormTransfer import form_transfer
 from FixedEffectModel.OLSFixed import OLSFixed
 from FixedEffectModel.RobustErr import robust_err
@@ -62,7 +62,8 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
             consist_var.append(i)
         consist_var.append(out_col[0])
         start = time.time()
-        demeaned_df = demean_dataframe(data_df, consist_var, category_col, epsilon, max_iter)
+        #demeaned_df = demean_dataframe(data_df, consist_var, category_col, epsilon, max_iter)
+        demeaned_df = demean_dataframe_pyhdfe(data_df, consist_var, category_col, cluster_col, epsilon, max_iter)
         end = time.time()
         print('demean time:',forg((end - start),4),'s')
         start = time.process_time()
