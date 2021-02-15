@@ -4,3 +4,4 @@ env*
 *__pycache__
 dev.txt
 FixedEffectModelPyHDFE.egg-info*
+build

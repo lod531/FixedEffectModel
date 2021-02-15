@@ -10,6 +10,9 @@ Install this package directly from PyPI
 $ pip install FixedEffectModelPyHDFE
 ```
 
+# Documentation
+
+Documentation is provided by Kuaishou DA group [here](https://github.com/ksecology/FixedEffectModel). Below is a copy of their README for convenience (and slight modification to reflect that PyHDFE is also being used in this package)
 # Main Functions
 
 |Function name| Description|Usage
@@ -36,8 +39,11 @@ formula = 'y~x+x2|id+firm|id+firm|(Q|W~x3+x4+x5)'
 result1 = FEM.ols_high_d_category(df, formula = formula,robust=False,c_method = 'cgm',epsilon = 1e-8,psdef= True,max_iter = 1e6)
 
 #or you can define the model through defining each part
+# a.k.a. predictors
 consist_input = ['x','x2']
+# a.k.a. target
 output_input = ['y']
+# a.k.a. variables to be absorbed
 category_input = ['id','firm']
 cluster_input = ['id','firm']
 endo_input = ['Q','W']
@@ -64,9 +70,10 @@ alpha_std(result1, formula = expression , sample_num=100)
 - Scipy and its dependencies
 - statsmodels and its dependencies
 - networkx
+- PyHDFE
 
 # Citation
-If you use FixedEffectModel in your research, please cite us as follows:
+If you use FixedEffectModel in your research, please cite the following:
 
 Kuaishou DA Ecology. **FixedEffectModel: A Python Package for Linear Model with High Dimensional Fixed Effects.**<https://github.com/ksecology/FixedEffectModel>,2020.Version 0.x
 
@@ -80,6 +87,20 @@ BibTex:
   year={2020}
 }
 ```
+
+Jeff Gortmaker and Anya Tarascina. **PyHDFE: High Dimensional Fixed Effect Absorption.**<https://github.com/jeffgortmaker/pyhdfe>,2019.Version 0.x
+
+BibTex:
+```
+@misc{PyHDFE,
+  author={Jeff Gortmaker with Anya Tarascina},
+  title={{PyHDFE: {High Dimensional Fixed Effect Absorption},
+  howpublished={https://github.com/jeffgortmaker/pyhdfe},
+  note={Version 0.x},
+  year={2019}
+}
+```
+
 # Feedback
 This package welcomes feedback. If you have any additional questions or comments, please contact <da_ecology@kuaishou.com>.
 
