@@ -30,6 +30,8 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
     :param c_method: method used to calculate multi-way clusters variance. Possible choices are:
             - 'cgm'
             - 'cgm2'
+            The default behaviour uses cgm to cluster a single variable, and cgm2 to cluster 
+            multiple variables.
     :param psdef:if True, replace negative eigenvalue of variance matrix with 0 (only in multi-way clusters variance)
     :param epsilon: tolerance of the demean process
     :param max_iter: max iteration of the demean process

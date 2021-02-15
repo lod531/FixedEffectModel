@@ -48,7 +48,8 @@ category_input = ['id','firm']
 cluster_input = ['id','firm']
 endo_input = ['Q','W']
 iv_input = ['x3','x4','x5']
-result1 = FEM.ols_high_d_category(df,consist_input,out_input,category_input,cluster_input,endo_input,iv_input,formula=None,robust=False,c_method = 'cgm',epsilon = 1e-8,max_iter = 1e6)
+c_method='cgm'
+result1 = FEM.ols_high_d_category(df,consist_input,out_input,category_input,cluster_input,endo_input,iv_input,formula=None,robust=False,c_method = c_method,epsilon = 1e-8,max_iter = 1e6)
 
 #show result
 result1.summary()
