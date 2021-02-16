@@ -71,7 +71,7 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
         consist_var.append(out_col[0])
         start = time.time()
         #demeaned_df = demean_dataframe(data_df, consist_var, category_col, epsilon, max_iter)
-        demeaned_df = demean_dataframe_pyhdfe(data_df, consist_var, category_col, cluster_col, epsilon, max_iter)
+        demeaned_df, pyhdfe = demean_dataframe_pyhdfe(data_df, consist_var, category_col, cluster_col, epsilon, max_iter)
         end = time.time()
         print('demean time:',forg((end - start),4),'s')
         start = time.process_time()
@@ -80,7 +80,12 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
         print('time used to calculate degree of freedom of category variables:',forg((end - start),4),'s')
         print('degree of freedom of category variables:', rank)
 
+
     model = sm.OLS(demeaned_df[out_col], demeaned_df[consist_col])
+    # if absorbing fixed effects
+    if category_col[0] != '0':
+        # adjust degrees of freedom to reflect absorbed effects
+        model.df_resid = np.sum(~pyhdfe._singleton_indices)-len(consist_input)-pyhdfe.degrees
     result = model.fit()
     demeaned_df['resid'] = result.resid
 
@@ -94,10 +99,13 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
     f_result.demeaned_df = demeaned_df
     f_result.params = result.params
     f_result.df = result.df_resid - rank
+    data_df = demeaned_df
 
     if (len(cluster_col) == 0) & (robust is False):
-        std_error = result.bse * np.sqrt((n - k) / (n - k - rank))
-        covariance_matrix = result.normalized_cov_params * result.scale * result.df_resid / f_result.df
+        #std_error = result.bse * np.sqrt((n - k) / (n - k - rank))
+        #covariance_matrix = result.normalized_cov_params * result.scale * result.df_resid / f_result.df
+        covariance_matrix = result.cov_params()
+        std_error = np.sqrt(np.diag(covariance_matrix))
     elif (len(cluster_col) == 0) & (robust is True):
         start = time.process_time()
         covariance_matrix = robust_err(demeaned_df, consist_col, n, k, rank)

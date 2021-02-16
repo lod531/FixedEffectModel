@@ -37,7 +37,7 @@ def demean_dataframe_pyhdfe(df, consist_var, category_col, cluster_col, epsilon=
     res = pd.DataFrame.from_records(data=data, columns=consist_var)
     for name in category_col+cluster_col:
         res[name] = get_np_columns(df, [name])[~algo._singleton_indices]
-    return res 
+    return res, algo
 
     
 def get_np_columns(df, columns, intercept=False):

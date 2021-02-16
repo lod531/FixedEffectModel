@@ -5,3 +5,4 @@ env*
 dev.txt
 FixedEffectModelPyHDFE.egg-info*
 build
+*.swo
