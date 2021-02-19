@@ -41,10 +41,12 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
 
     # in case of multiple clusters cgm2 is preferred. Can be manually
     # overrriden by supplying the c_method parameter.
-    if len(cluster_input) > 1 and c_method is None:
-        c_method='cgm2'
-    else:
-        c_method='cgm'
+    if c_method is None:
+        if len(cluster_input) > 1:
+            c_method='cgm2'
+        else:
+            c_method == 'cgm'
+    print("C_METHOD", c_method)
     if (consist_input is None) & (formula is None):
         raise NameError('You have to input list of variables name or formula')
     elif consist_input is None:
@@ -56,6 +58,11 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
     else:
         out_col, consist_col, category_col, cluster_col = out_input, consist_input, category_input, cluster_input
     consist_var = []
+
+    if not bool(category_col):
+        print("WARNING: category_col is empty.")
+        print("Assuming that no fixed effects are to be asorbed.")
+        category_col = ['0']
 
     if category_col[0] == '0':
         demeaned_df = data_df.copy()
@@ -75,7 +82,8 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
         end = time.time()
         print('demean time:',forg((end - start),4),'s')
         start = time.process_time()
-        rank = cal_df(data_df, category_col)
+        #rank = cal_df(data_df, category_col)
+        rank = pyhdfe.degrees
         end = time.process_time()
         print('time used to calculate degree of freedom of category variables:',forg((end - start),4),'s')
         print('degree of freedom of category variables:', rank)
