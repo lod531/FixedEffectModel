@@ -14,6 +14,7 @@ from scipy.stats import f
 import time
 import numpy as np
 import pandas as pd
+import numpy.linalg as la
 
 
 def ols_high_d_category(data_df, consist_input=None, out_input=None, category_input=None, cluster_input=[],
@@ -46,7 +47,6 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
             c_method='cgm2'
         else:
             c_method == 'cgm'
-    print("C_METHOD", c_method)
     if (consist_input is None) & (formula is None):
         raise NameError('You have to input list of variables name or formula')
     elif consist_input is None:
@@ -87,7 +87,6 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
         end = time.process_time()
         print('time used to calculate degree of freedom of category variables:',forg((end - start),4),'s')
         print('degree of freedom of category variables:', rank)
-
 
     model = sm.OLS(demeaned_df[out_col], demeaned_df[consist_col])
     # if absorbing fixed effects
@@ -134,7 +133,7 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
         #     f_result.df = min(min_clust(data_df, cluster_col) - 1, f_result.df)
 
         start = time.process_time()
-        covariance_matrix = clustered_error(demeaned_df, consist_col, cluster_col, n, k, rank, nested=nested,
+        covariance_matrix = clustered_error(demeaned_df, consist_col, out_col, cluster_col, n, k, rank, nested=nested,
                                             c_method=c_method, psdef=psdef)
         end = time.process_time()
         print('time used to calculate clustered covariance matrix:',forg((end - start),4),'s')
@@ -151,6 +150,7 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
     tmp1 = np.linalg.solve(f_result.variance_matrix, np.mat(f_result.params).T)
     tmp2 = np.dot(np.mat(f_result.params), tmp1)
     f_result.fvalue = tmp2[0, 0] / result.df_model
+    #f_result.fvalue = f_test(V = f_result.variance_matrix[1:, 1:], beta= f_result.params[1:], df_d=min_clust(demeaned_df, cluster_col))
     end = time.process_time()
     print('time used to calculate fvalue:',forg((end - start),4),'s')
     if len(cluster_col) > 0 and c_method == 'cgm':
@@ -181,6 +181,33 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
         f_result.Covariance_Type = 'clustered'
     return f_result  # , demeaned_df
 
+# TODO: Roll this into Results object?
+def f_test(V: np.ndarray, beta: np.ndarray,
+           df_d: int) -> float:
+    """Arbitrary F test.
+
+    Args:
+        V (array): K-by-K variance-covariance matrix.
+        R (array): K-by-K Test matrix.
+        beta (array): Length-K vector of coefficient estimates.
+        r (array): Length-K vector of null hypotheses.
+        df_d (int): Denominator degrees of freedom.
+
+    Returns:
+        tuple: A tuple containing:
+            - **F** (float): F-stat.
+            - **pF** (float): p-score for ``F``.
+    """
+    R = np.identity(n=V.shape[0])
+    Rbr = R.dot(beta)
+    if Rbr.ndim == 1:
+        Rbr = Rbr.reshape(-1, 1)
+
+    middle = la.inv(R.dot(V).dot(R.T))
+    df_n = R.shape[0]
+    # Can't just squeeze, or we get a 0-d array
+    F = (Rbr.T.dot(middle).dot(Rbr)/df_n).flatten()[0]
+    return F
 
 def ols_high_d_category_multi_results(data_df, models, table_header):
     """
