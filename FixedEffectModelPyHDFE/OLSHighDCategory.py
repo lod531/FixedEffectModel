@@ -147,10 +147,16 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
     f_result.rsquared = result.rsquared
     f_result.rsquared_adj = 1 - (len(data_df) - 1) / (result.df_resid - rank) * (1 - result.rsquared)
     start = time.process_time()
-    tmp1 = np.linalg.solve(f_result.variance_matrix, np.mat(f_result.params).T)
-    tmp2 = np.dot(np.mat(f_result.params), tmp1)
-    f_result.fvalue = tmp2[0, 0] / result.df_model
-    #f_result.fvalue = f_test(V = f_result.variance_matrix[1:, 1:], beta= f_result.params[1:], df_d=min_clust(demeaned_df, cluster_col))
+    if category_input == ['0']:
+        r_matrix = np.identity(len(consist_col)-1)
+        r_matrix = np.c_[np.zeros(shape=r_matrix.shape[0]), r_matrix]
+#        test = result.wald_test(r_matrix = "(wks_ue = 0, tenure = 0)", cov_p = covariance_matrix)
+        test = result.wald_test(r_matrix = r_matrix, cov_p = covariance_matrix)
+        f_result.fvalue = test.fvalue
+    else:
+        tmp1 = np.linalg.solve(f_result.variance_matrix, np.mat(f_result.params).T)
+        tmp2 = np.dot(np.mat(f_result.params), tmp1)
+        f_result.fvalue = tmp2[0, 0] / result.df_model
     end = time.process_time()
     print('time used to calculate fvalue:',forg((end - start),4),'s')
     if len(cluster_col) > 0 and c_method == 'cgm':

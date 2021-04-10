@@ -169,7 +169,16 @@ def clustered_error(demean, consist_col, out_col, cluster_col, n, k, rank, neste
     elif c_method == 'cgm2':
         for i in beta_list:
             G_MIN = np.min(G_array)
-            scale = scale_df * G_MIN / (G_MIN - 1)
+            if rank != 0:
+                scale = scale_df * G_MIN / (G_MIN - 1)
+            else:
+                # K = number of predictors
+                # G = minimum number of clusters
+                # N = number of datapoints
+                N = demean[consist_col].values.shape[0]
+                # +1 for the intercept)
+                K = len(consist_col)
+                scale = (G_MIN/(G_MIN-1))/((N-1)/(N-K))
             m += i * scale
 
     if psdef is True and len(cluster_col) > 1:
