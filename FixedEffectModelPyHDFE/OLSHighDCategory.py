@@ -46,7 +46,7 @@ def ols_high_d_category(data_df, consist_input=None, out_input=None, category_in
         if len(cluster_input) > 1:
             c_method='cgm2'
         else:
-            c_method == 'cgm'
+            c_method = 'cgm'
     if (consist_input is None) & (formula is None):
         raise NameError('You have to input list of variables name or formula')
     elif consist_input is None:

@@ -51,43 +51,43 @@ def clustered_error(demean, consist_col, out_col, cluster_col, n, k, rank, neste
         scale_df = (n - 1) / (n - k - rank)
 
     if len(cluster_col) == 1:
-        X = demean[consist_col].values
-        #y = get_np_columns(df, ['ttl_exp'])
-        y = demean[out_col].values
-
-        # Calculate (X'X)^-1 and the vector of coefficients, beta
-        XX_inv = np.linalg.inv(X.T.dot(X))
-        beta = (XX_inv).dot(X.T.dot(y))
-        resid = y - X.dot(beta)
-
-        #ID = np.random.choice([x for x in range(Nclusts)],N) # Vector of cluster IDs
-        #ID = np.squeeze(get_np_columns(df, ['delete_me']))
-        ID = np.squeeze(demean[cluster_col])
-        c_list = np.unique(ID) # Get unique list of clusters
-
-        N, k, Nclusts = X.shape[0], X.shape[1], int(c_list.shape[0])
-
-        sum_XuuTX = 0
-        for c in range(0,Nclusts):
-            in_cluster = (ID==c_list[c]) # Indicator for given cluster value
-            resid_c = resid[in_cluster]
-            uuT = resid_c.dot(resid_c.T)
-            Xc = X[in_cluster]
-            XuuTX = Xc.T.dot(uuT).dot(Xc)
-            sum_XuuTX += XuuTX
-
-        adj = (Nclusts/(Nclusts-1))*((N-1)/(N-k)) # Degrees of freedom correction from https://www.stata.com/manuals13/u20.pdf p. 54
-        # TODO: actually check if the fixed effects are nested
-        df_a_nested = 0
-        adj = ((N-1)/(N-df_a_nested-k))*(Nclusts/(Nclusts-1))
-        V_beta = adj*(XX_inv.dot(sum_XuuTX).dot(XX_inv))
-        se_beta = np.sqrt(np.diag(V_beta))
-        print("se_beta", se_beta)
-
-        tmp1 = np.linalg.solve(V_beta, beta)
-        tmp2 = np.dot(np.mat(beta).T, tmp1)
-        fvalue = tmp2[0, 0] / (k-1)
-        print('fvalue', fvalue)
+#        X = demean[consist_col].values
+#        #y = get_np_columns(df, ['ttl_exp'])
+#        y = demean[out_col].values
+#
+#        # Calculate (X'X)^-1 and the vector of coefficients, beta
+#        XX_inv = np.linalg.inv(X.T.dot(X))
+#        beta = (XX_inv).dot(X.T.dot(y))
+#        resid = y - X.dot(beta)
+#
+#        #ID = np.random.choice([x for x in range(Nclusts)],N) # Vector of cluster IDs
+#        #ID = np.squeeze(get_np_columns(df, ['delete_me']))
+#        ID = np.squeeze(demean[cluster_col])
+#        c_list = np.unique(ID) # Get unique list of clusters
+#
+#        N, k, Nclusts = X.shape[0], X.shape[1], int(c_list.shape[0])
+#
+#        sum_XuuTX = 0
+#        for c in range(0,Nclusts):
+#            in_cluster = (ID==c_list[c]) # Indicator for given cluster value
+#            resid_c = resid[in_cluster]
+#            uuT = resid_c.dot(resid_c.T)
+#            Xc = X[in_cluster]
+#            XuuTX = Xc.T.dot(uuT).dot(Xc)
+#            sum_XuuTX += XuuTX
+#
+#        adj = (Nclusts/(Nclusts-1))*((N-1)/(N-k)) # Degrees of freedom correction from https://www.stata.com/manuals13/u20.pdf p. 54
+#        # TODO: actually check if the fixed effects are nested
+#        df_a_nested = 0
+#        adj = ((N-1)/(N-df_a_nested-k))*(Nclusts/(Nclusts-1))
+#        V_beta = adj*(XX_inv.dot(sum_XuuTX).dot(XX_inv))
+#        se_beta = np.sqrt(np.diag(V_beta))
+#        print("se_beta", se_beta)
+#
+#        tmp1 = np.linalg.solve(V_beta, beta)
+#        tmp2 = np.dot(np.mat(beta).T, tmp1)
+#        fvalue = tmp2[0, 0] / (k-1)
+#        print('fvalue', fvalue)
 
 #        ##################################################################	
 	
@@ -178,7 +178,8 @@ def clustered_error(demean, consist_col, out_col, cluster_col, n, k, rank, neste
                 N = demean[consist_col].values.shape[0]
                 # +1 for the intercept)
                 K = len(consist_col)
-                scale = (G_MIN/(G_MIN-1))/((N-1)/(N-K))
+                scale = (G_MIN/(G_MIN-1))*((N-1)/(N-K))
+                #scale = (G_MIN/(G_MIN-1))/((N-1)/(N-K))
             m += i * scale
 
     if psdef is True and len(cluster_col) > 1:
