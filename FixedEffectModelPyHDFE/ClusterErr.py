@@ -162,6 +162,7 @@ def clustered_error(demean, consist_col, out_col, cluster_col, n, k, rank, neste
                     G_array = np.append(G_array, G)
                     beta_list.append(beta)
     # print(G_array)
+
     m = np.zeros((k, k))
     if c_method == 'cgm':
         for i in beta_list:
@@ -178,11 +179,16 @@ def clustered_error(demean, consist_col, out_col, cluster_col, n, k, rank, neste
                 N = demean[consist_col].values.shape[0]
                 # +1 for the intercept)
                 K = len(consist_col)
-                scale = (G_MIN/(G_MIN-1))*((N-1)/(N-K))
+                scale = (G_MIN/(G_MIN-1))*((N-1)/(N-int(nested)-K))
                 #scale = (G_MIN/(G_MIN-1))/((N-1)/(N-K))
             m += i * scale
 
     if psdef is True and len(cluster_col) > 1:
+#        test = np.asarray([[.0000534552, 9.13497e-06, -.0000239134],
+#                            [9.13497e-06, .0000828932, -.0000645376],
+#                            [-.0000239134, -.0000645376, -.0000111927]])
+#        test2 = np.asarray([[2.1196712149298135e-05, 6.727112646704826e-06],
+#                            [6.727112646704826e-06, 0.00011336617960559802]])
         m_eigen_value, m_eigen_vector = np.linalg.eig(m)
         m_new_eigen_value = np.maximum(m_eigen_value, 0)
         if (m_eigen_value != m_new_eigen_value).any():
