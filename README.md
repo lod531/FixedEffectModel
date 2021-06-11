@@ -2,48 +2,21 @@ FixedEffectModelPyHDFE: A Python Package for Linear Model with High Dimensional 
 =======================
 **FixedEffectModel** is a Python Package designed and built by **Kuaishou DA ecology group**. It provides solutions for linear model with high dimensional fixed effects,including support for calculation in variance (robust variance and multi-way cluster variance), fixed effects, and standard error of fixed effects. It also supports model with instrument variables (will upgrade in late Nov.2020).
 
-As You may have noticed, this is not **FixedEffectModel**, but rather FixedEffectModel**PyHDFE**. In this version, the fixed effects backend was switched to use the PyHDFE library, offering significant speed increases with no downsides. Some modifications have also been made in order to replicate reghdfe Stata package behaviour.
+As You may have noticed, this is not **FixedEffectModel**, but rather FixedEffectModel**PyHDFE**. The goal of this library is to reproduce the brilliant **regHDFE** Stata package on Python. To this end, the algorithm FEM used to calculate fixed effects has been replaced with **PyHDFE**, and a number of further changes have been made.
+
+Presently, this package replicates regHDFE functionality for most use cases. For examples, please see tests/test\_clustering.py.
+
+If You find a regression whose output is different in FEMPyHDFE than what regHDFE produces please open an issue on this repo!
+ 
 # Installation
 
 Install this package directly from PyPI
 ```bash
 $ pip install FixedEffectModelPyHDFE
 ```
+# Limitations
 
-# reghdfe reproduction
-
-## Reproduced cases:
-
-* Absorbing any number of variables with no clustering.
-
-* Absorbing a single variable and clustering with that same variable.
-
-* Absorbing a single variable and clustering on any number of variables
-(including clustering and absorbing same variable).
-
-
-## Cases sort of reproduced:
-
-* Absorbing multiple variables and clustering on a single variable
-(mild differences e.g. 484.87 v.s. 490.0133 Fval, this is probably
-due to DoF adjustments when there is a mix of nested and not nested 
-fixed effects within clusters).
-
-* Absorbing multiple and clustering on multiple values, with two variable shared in
-clustering and absorption.
-    * This seems to deviate a little when absorbed degrees of freedom are not 
-nested within a cluster. That's probably not the core issue though - 
-if it were You'd expect clustering and absorbing same list of variables to just
-work.
-    * It's hard to pinpoint the cause for this, but the larger the F-value the 
-larger the deviation e.g. 78.36 v.s. 78.4016 in smallest case 659.24 v.s. 670.6178 and in the case of larger values it's 3459.8180 v.s. 3115.68 when it's way up there.
-
-    * It is not the case that the more variables are clustered and absorbed the worse
-the divergence becomes e.g. 2 shared variables 3026.68 v.s. 3228.3221
-5 shared variables 78.35 v.s. 78.4791 fvals.
-
-    * Reghdfe will sometimes output thisL "Warning: VCV matrix was non-positive semi-definite; adjustment from Cameron, Gelbach & Miller applied." This adjustment may be missing.
-
+The original FEM package includes functionality other than absorbing and clustering variables - for example it includes instrumental variable functionality. The focus of this package for the moment is solely on the absorption and clustering functions, so no guarantees on any other functionality.
 
 # Documentation
 
@@ -59,6 +32,8 @@ Documentation is provided by Kuaishou DA group [here](https://github.com/ksecolo
 
 
 # Example
+
+For a plethora of examples, please also see tests/test_clustering.py
 
 ```python
 import FixedEffectModelPyHDFE.api as FEM
@@ -88,15 +63,6 @@ result1 = FEM.ols_high_d_category(df,consist_input,out_input,category_input,clus
 
 #show result
 result1.summary()
-
-#get fixed effects
-getfe(result1 , epsilon=1e-8)
-
-#define the expression of standard error of difference between two fixed effect estimations you want to know
-expression = 'id_1-id_2'
-#get standard error
-alpha_std(result1, formula = expression , sample_num=100)
-
 ```
 
 
